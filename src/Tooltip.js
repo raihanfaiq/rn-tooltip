@@ -36,6 +36,7 @@ type Props = {
   onOpen: () => void,
   withOverlay: boolean,
   closeOnOverlay: boolean,
+  closeOnPopover: boolean,
   overlayColor: string,
   backgroundColor: string,
   highlightColor: string,
@@ -56,6 +57,7 @@ class Tooltip extends React.Component<Props, State> {
   timeout;
 
   toggleTooltip = () => {
+    console.log('toggleTooltip');
     const { onClose } = this.props;
     this.getElementPosition();
     this.setState(prevState => {
@@ -68,6 +70,7 @@ class Tooltip extends React.Component<Props, State> {
   };
 
   wrapWithAction = (actionType, children) => {
+
     switch (actionType) {
       case 'press':
         return (
@@ -166,13 +169,15 @@ class Tooltip extends React.Component<Props, State> {
     );
   };
   renderContent = withTooltip => {
-    const { popover, withPointer, highlightColor, actionType } = this.props;
+    const { popover, withPointer, highlightColor, actionType, closeOnPopover } = this.props;
 
     if (!withTooltip)
       return this.wrapWithAction(actionType, this.props.children);
 
     const { yOffset, xOffset, elementWidth, elementHeight } = this.state;
-    const tooltipStyle = this.getTooltipStyle();
+    const tooltipStyle = this.getTooltipStyle()
+
+    console.log('closeOnPopover', closeOnPopover);
     return (
         <React.Fragment>
           <View
@@ -190,7 +195,17 @@ class Tooltip extends React.Component<Props, State> {
             {this.props.children}
           </View>
           {withPointer && this.renderPointer(!tooltipStyle.top)}
-          <View style={tooltipStyle}>{popover}</View>
+          {
+            closeOnPopover ?
+                (<TouchableOpacity
+                    onPress={this.toggleTooltip}
+                    activeOpacity={1}
+                    style={tooltipStyle}
+                >
+                  <View>{popover}</View>
+                </TouchableOpacity>) :
+                (<View style={tooltipStyle}>{popover}</View>)
+          }
         </React.Fragment>
     );
   };
@@ -258,6 +273,7 @@ Tooltip.propTypes = {
   onOpen: PropTypes.func,
   withOverlay: PropTypes.bool,
   closeOnOverlay: PropTypes.bool,
+  closeOnPopover: PropTypes.bool,
   toggleWrapperProps: PropTypes.object,
   overlayColor: PropTypes.string,
   backgroundColor: PropTypes.string,
@@ -269,6 +285,7 @@ Tooltip.defaultProps = {
   toggleWrapperProps: {},
   withOverlay: true,
   closeOnOverlay: true,
+  closeOnPopover: true,
   highlightColor: 'transparent',
   withPointer: true,
   actionType: 'press',

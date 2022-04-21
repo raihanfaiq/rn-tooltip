@@ -13,6 +13,7 @@ type Props = {
   onOpen?: () => void,
   withOverlay?: boolean,
   closeOnOverlay?: boolean,
+  closeOnPopover?: boolean,
   overlayColor?: string,
   backgroundColor?: string,
   highlightColor?: string,
