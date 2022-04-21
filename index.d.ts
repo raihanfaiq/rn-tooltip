@@ -12,6 +12,7 @@ type Props = {
   onClose?: () => void,
   onOpen?: () => void,
   withOverlay?: boolean,
+  closeOnOverlay?: boolean,
   overlayColor?: string,
   backgroundColor?: string,
   highlightColor?: string,
