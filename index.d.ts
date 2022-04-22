@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleProp, ViewStyle, TouchableOpacityProps } from 'react-native';
 
 type Props = {
+  isVisible?: boolean,
   popover?: React.ReactElement<{}>;
   withPointer?: boolean,
   height?: number | string,
@@ -14,6 +15,9 @@ type Props = {
   withOverlay?: boolean,
   closeOnOverlay?: boolean,
   closeOnPopover?: boolean,
+  tooltipOffset?: number,
+  mainPadding?: number,
+  mainBorderRadius?: number,
   overlayColor?: string,
   backgroundColor?: string,
   highlightColor?: string,
