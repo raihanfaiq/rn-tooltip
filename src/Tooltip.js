@@ -18,6 +18,8 @@ import {
   ActualScreenHeight,
 } from './helpers';
 import getTooltipCoordinate from './getTooltipCoordinate';
+import { IconButton } from '../../../components/atoms/IconButton';
+import { Icon } from '../../../components/quarks/Icon';
 
 const ViewPropTypes = RNViewPropTypes || View.propTypes;
 
@@ -27,6 +29,8 @@ type State = {
   xOffset: number,
   elementWidth: number,
   elementHeight: number,
+  elementPopoverHeight: number,
+  elementPopoverYOffset: number,
 };
 
 type Props = {
@@ -61,6 +65,8 @@ class Tooltip extends React.Component<Props, State> {
     xOffset: 0,
     elementWidth: 0,
     elementHeight: 0,
+    elementPopoverHeight: 0,
+    elementPopoverYOffset: 0,
   };
 
   renderedElement;
@@ -68,7 +74,7 @@ class Tooltip extends React.Component<Props, State> {
 
   toggleTooltip = () => {
     const { onClose, onOpen } = this.props;
-    this.getElementPosition();
+
     this.setState(prevState => {
       if (prevState.isVisible && !isIOS) {
         onClose && onClose();
@@ -76,6 +82,8 @@ class Tooltip extends React.Component<Props, State> {
       if (!prevState.isVisible) {
         onOpen && onOpen();
       }
+
+      this.getElementPosition();
 
       return { isVisible: !prevState.isVisible };
     });
@@ -156,7 +164,7 @@ class Tooltip extends React.Component<Props, State> {
       tooltipStyle.top = y + tooltipOffset;
     }
 
-    return { tooltipStyle, pastMiddleLine };
+    return { tooltipStyle, pastMiddleLine, y };
   };
 
   renderPointer = pastMiddleLine => {
@@ -201,8 +209,14 @@ class Tooltip extends React.Component<Props, State> {
     if (!withTooltip)
       return this.wrapWithAction(actionType, this.props.children);
 
-    const { yOffset, xOffset, elementWidth, elementHeight } = this.state;
-    const { tooltipStyle } = this.getTooltipStyle();
+    const {
+      yOffset,
+      xOffset,
+      elementWidth,
+      elementHeight,
+      elementPopoverHeight,
+    } = this.state;
+    const { tooltipStyle, pastMiddleLine } = this.getTooltipStyle();
 
     return (
       <React.Fragment>
@@ -226,19 +240,69 @@ class Tooltip extends React.Component<Props, State> {
             onPress={this.toggleTooltip}
             activeOpacity={1}
             style={tooltipStyle}
+            ref={e => (this.renderedPopover = e)}
           >
             <View>{popover}</View>
           </TouchableOpacity>
         ) : (
-          <View style={tooltipStyle}>{popover}</View>
+          <View ref={e => (this.renderedPopover = e)} style={tooltipStyle}>
+            {popover}
+          </View>
         )}
+        <View
+          style={{
+            width: 31,
+            height: 31,
+            position: 'absolute',
+            right: tooltipStyle.right + (tooltipStyle.width - 20),
+            left: tooltipStyle.left + (tooltipStyle.width - 20),
+            top: pastMiddleLine ? null : Number(tooltipStyle.top) - 15,
+            bottom: pastMiddleLine
+              ? tooltipStyle.bottom + elementPopoverHeight - 15
+              : null,
+            zIndex: 10,
+            borderRadius: 31,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#ffe493',
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+        >
+          <IconButton
+            onPress={() => {
+              this.toggleTooltip();
+            }}
+            style={{ padding: 15, zIndex: 10 }}
+          >
+            <Icon variant="cross" />
+          </IconButton>
+        </View>
       </React.Fragment>
     );
   };
 
   componentDidMount() {
     // wait to compute onLayout values.
-    this.timeout = setTimeout(this.getElementPosition, 500);
+    // eslint-disable-next-line no-undef
+    const initElem = new Promise(resolve => {
+      let interval = setInterval(() => {
+        //@ts-ignore
+        if (this.renderedPopover && this.renderedElement) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+    });
+    initElem.then(() => {
+      this.getElementPosition();
+    });
   }
 
   componentWillUnmount() {
@@ -254,6 +318,16 @@ class Tooltip extends React.Component<Props, State> {
             yOffset: pageOffsetY,
             elementWidth: width,
             elementHeight: height,
+          });
+        },
+      );
+
+    this.renderedPopover &&
+      this.renderedPopover.measureInWindow(
+        (pageOffsetX, pageOffsetY, width, height) => {
+          this.setState({
+            elementPopoverYOffset: pageOffsetY,
+            elementPopoverHeight: height,
           });
         },
       );
