@@ -18,8 +18,39 @@ import {
   ActualScreenHeight,
 } from './helpers';
 import getTooltipCoordinate from './getTooltipCoordinate';
-import { IconButton } from '../../../components/atoms/IconButton';
-import { Icon } from '../../../components/quarks/Icon';
+import Svg, { Rect } from 'react-native-svg';
+
+const IconClose = (props: any) => {
+  const { fill = '#000' } = props;
+
+  return (
+    <Svg
+      width={12}
+      height={12}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <Rect
+        x={0.54}
+        width={16.044}
+        height={0.764}
+        rx={0.382}
+        transform="rotate(45 .54 0)"
+        fill={fill}
+      />
+      <Rect
+        x={12}
+        y={0.54}
+        width={16.044}
+        height={0.764}
+        rx={0.382}
+        transform="rotate(135 12 .54)"
+        fill={fill}
+      />
+    </Svg>
+  );
+};
 
 const ViewPropTypes = RNViewPropTypes || View.propTypes;
 
@@ -36,6 +67,10 @@ type State = {
 type Props = {
   withPointer: boolean,
   popover: React.Element,
+  withCloseIcon: boolean,
+  closeIconRender: React.Element,
+  closeIconColor: string,
+  closeIconBackgroundColor: string,
   height: number | string,
   width: number | string,
   isVisible: boolean,
@@ -55,12 +90,12 @@ type Props = {
   highlightColor: string,
   toggleWrapperProps: {},
   actionType: 'press' | 'longPress' | 'none',
+  position: 'center',
 };
 
 class Tooltip extends React.Component<Props, State> {
   state = {
-    isVisible:
-      this.props.isVisible !== undefined ? this.props.isVisible : false,
+    isVisible: false,
     yOffset: 0,
     xOffset: 0,
     elementWidth: 0,
@@ -127,9 +162,10 @@ class Tooltip extends React.Component<Props, State> {
       tooltipOffset,
       mainPadding,
       mainBorderRadius,
+      position,
     } = this.props;
 
-    const { x, y } = getTooltipCoordinate(
+    const { y } = getTooltipCoordinate(
       xOffset,
       yOffset,
       elementWidth,
@@ -140,10 +176,22 @@ class Tooltip extends React.Component<Props, State> {
       withPointer,
     );
 
+    const tooltipPosition = () => {
+      if (position === 'center') {
+        return ScreenWidth / 2 - width / 2;
+      } else if (position === null) {
+        if (xOffset > ScreenWidth / 2) {
+          return xOffset - width + elementWidth;
+        } else {
+          return xOffset;
+        }
+      }
+    };
+
     const tooltipStyle = {
       position: 'absolute',
-      left: I18nManager.isRTL ? null : x,
-      right: I18nManager.isRTL ? x : null,
+      left: I18nManager.isRTL ? null : tooltipPosition(),
+      right: I18nManager.isRTL ? tooltipPosition() : null,
       width,
       height,
       backgroundColor,
@@ -204,6 +252,10 @@ class Tooltip extends React.Component<Props, State> {
       highlightColor,
       actionType,
       closeOnPopover,
+      closeIconRender,
+      closeIconColor,
+      closeIconBackgroundColor,
+      withCloseIcon,
     } = this.props;
 
     if (!withTooltip)
@@ -249,41 +301,47 @@ class Tooltip extends React.Component<Props, State> {
             {popover}
           </View>
         )}
-        <View
-          style={{
-            width: 31,
-            height: 31,
-            position: 'absolute',
-            right: tooltipStyle.right + (tooltipStyle.width - 20),
-            left: tooltipStyle.left + (tooltipStyle.width - 20),
-            top: pastMiddleLine ? null : Number(tooltipStyle.top) - 15,
-            bottom: pastMiddleLine
-              ? tooltipStyle.bottom + elementPopoverHeight - 15
-              : null,
-            zIndex: 10,
-            borderRadius: 31,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#ffe493',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 2,
-            },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <IconButton
-            onPress={() => {
-              this.toggleTooltip();
+        {withCloseIcon ? (
+          <View
+            style={{
+              width: 31,
+              height: 31,
+              position: 'absolute',
+              right: tooltipStyle.right + (tooltipStyle.width - 20),
+              left: tooltipStyle.left + (tooltipStyle.width - 20),
+              top: pastMiddleLine ? null : Number(tooltipStyle.top) - 15,
+              bottom: pastMiddleLine
+                ? tooltipStyle.bottom + elementPopoverHeight - 15
+                : null,
+              zIndex: 10,
+              borderRadius: 31,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: closeIconBackgroundColor,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
             }}
-            style={{ padding: 15, zIndex: 10 }}
           >
-            <Icon variant="cross" />
-          </IconButton>
-        </View>
+            <TouchableOpacity
+              onPress={() => {
+                this.toggleTooltip();
+              }}
+              style={{ padding: 15 }}
+            >
+              {closeIconRender ? (
+                closeIconRender
+              ) : (
+                <IconClose fill={closeIconColor} />
+              )}
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </React.Fragment>
     );
   };
@@ -348,21 +406,10 @@ class Tooltip extends React.Component<Props, State> {
         {this.renderContent(false)}
         <Modal
           animationType="fade"
-          visible={
-            this.props.isVisible !== undefined && this.props.isVisible
-              ? this.props.isVisible
-              : this.props.isVisible !== undefined
-              ? this.props.isVisible
-              : isVisible
-          }
+          visible={isVisible}
           transparent
           onDismiss={onClose}
-          onShow={() => {
-            this.setState({
-              isVisible: true,
-            });
-            onOpen();
-          }}
+          onShow={onOpen}
           onRequestClose={onClose}
         >
           <TouchableOpacity
@@ -379,9 +426,12 @@ class Tooltip extends React.Component<Props, State> {
 
 Tooltip.propTypes = {
   children: PropTypes.element,
-  isVisible: PropTypes.oneOfType([PropTypes.bool, PropTypes.instanceOf(null)]),
   withPointer: PropTypes.bool,
   popover: PropTypes.element,
+  withCloseIcon: PropTypes.bool,
+  closeIconRender: PropTypes.element,
+  closeIconColor: PropTypes.string,
+  closeIconBackgroundColor: PropTypes.string,
   height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   containerStyle: ViewPropTypes.style,
@@ -400,9 +450,14 @@ Tooltip.propTypes = {
   backgroundColor: PropTypes.string,
   highlightColor: PropTypes.string,
   actionType: PropTypes.oneOf(['press', 'longPress', 'none']),
+  position: 'center',
 };
 
 Tooltip.defaultProps = {
+  position: null,
+  withCloseIcon: false,
+  closeIconColor: 'black',
+  closeIconBackgroundColor: 'gray',
   toggleWrapperProps: {},
   withOverlay: true,
   closeOnOverlay: true,
