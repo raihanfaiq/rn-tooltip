@@ -73,7 +73,6 @@ type Props = {
   closeIconBackgroundColor: string,
   height: number | string,
   width: number | string,
-  isVisible: boolean,
   containerStyle: any,
   pointerColor: string,
   pointerStyle: {},
@@ -356,7 +355,7 @@ class Tooltip extends React.Component<Props, State> {
           clearInterval(interval);
           resolve();
         }
-      }, 100);
+      }, 10);
     });
     initElem.then(() => {
       this.getElementPosition();
