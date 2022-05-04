@@ -9,7 +9,10 @@ export const isIOS = Platform.OS === 'ios';
 
 export const ActualScreenHeight = Platform.select({
   ios: ScreenHeight,
-  android: ScreenHeight - StatusBar.currentHeight,
+  android:
+    StatusBar.currentHeight > 24
+      ? ScreenHeight
+      : ScreenHeight - StatusBar.currentHeight,
 });
 
 export const Colors = {

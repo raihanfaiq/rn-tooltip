@@ -358,7 +358,9 @@ class Tooltip extends React.Component<Props, State> {
       }, 10);
     });
     initElem.then(() => {
-      this.getElementPosition();
+      setTimeout(() => {
+        this.getElementPosition();
+      }, 1);
     });
   }
 
