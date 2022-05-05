@@ -89,7 +89,7 @@ type Props = {
   highlightColor: string,
   toggleWrapperProps: {},
   actionType: 'press' | 'longPress' | 'none',
-  position: 'center',
+  position: string,
 };
 
 class Tooltip extends React.Component<Props, State> {
@@ -451,7 +451,7 @@ Tooltip.propTypes = {
   backgroundColor: PropTypes.string,
   highlightColor: PropTypes.string,
   actionType: PropTypes.oneOf(['press', 'longPress', 'none']),
-  position: 'center',
+  position: PropTypes.string,
 };
 
 Tooltip.defaultProps = {
