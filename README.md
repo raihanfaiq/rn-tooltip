@@ -1,5 +1,5 @@
 
-[![npm version](https://badge.fury.io/js/rn-tooltip.svg)](https://badge.fury.io/js/rn-tooltip)
+
 
 
 # rn-tooltip
@@ -15,11 +15,11 @@ Code for the Expo app is here: https://github.com/andreiCalazans/rnTooltipTester
 
 ## Install
 
-`yarn add rn-tooltip`
+`yarn add <orionpro>/<rn-tooltip> --save`
 
 or
 
-`npm install rn-tooltip --save`
+`npm install <orionpro>/<rn-tooltip> --save`
 
 
 
