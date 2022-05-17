@@ -18,6 +18,7 @@ type Props = {
   withOverlay?: boolean,
   closeOnOverlay?: boolean,
   closeOnPopover?: boolean,
+  onRequestClose?: boolean,
   tooltipOffset?: number,
   mainPadding?: number,
   mainBorderRadius?: number,
@@ -26,7 +27,7 @@ type Props = {
   highlightColor?: string,
   toggleWrapperProps?: TouchableOpacityProps,
   actionType: 'press' | 'longPress' | 'none',
-  position?: 'center'
+  position: string
 };
 
 export default class Tooltip extends React.Component<Props, any> {

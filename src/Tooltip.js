@@ -81,6 +81,7 @@ type Props = {
   withOverlay: boolean,
   closeOnOverlay: boolean,
   closeOnPopover: boolean,
+  onRequestClose: boolean,
   tooltipOffset: number,
   mainPadding: number,
   mainBorderRadius: number,
@@ -400,6 +401,7 @@ class Tooltip extends React.Component<Props, State> {
       onOpen,
       overlayColor,
       closeOnOverlay,
+      onRequestClose,
     } = this.props;
 
     return (
@@ -411,7 +413,9 @@ class Tooltip extends React.Component<Props, State> {
           transparent
           onDismiss={onClose}
           onShow={onOpen}
-          onRequestClose={onClose}
+          onRequestClose={() => {
+            onRequestClose && onClose();
+          }}
         >
           <TouchableOpacity
             style={styles.container(withOverlay, overlayColor)}
@@ -443,6 +447,7 @@ Tooltip.propTypes = {
   withOverlay: PropTypes.bool,
   closeOnOverlay: PropTypes.bool,
   closeOnPopover: PropTypes.bool,
+  onRequestClose: PropTypes.bool,
   tooltipOffset: PropTypes.number,
   mainPadding: PropTypes.number,
   mainBorderRadius: PropTypes.number,
@@ -469,6 +474,7 @@ Tooltip.defaultProps = {
   highlightColor: 'transparent',
   withPointer: true,
   actionType: 'press',
+  onRequestClose: true,
   height: 40,
   width: 150,
   containerStyle: {},
