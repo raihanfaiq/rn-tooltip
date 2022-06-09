@@ -373,22 +373,24 @@ class Tooltip extends React.Component<Props, State> {
     this.renderedElement &&
       this.renderedElement.measureInWindow(
         (pageOffsetX, pageOffsetY, width, height) => {
-          this.setState({
-            xOffset: pageOffsetX,
-            yOffset: pageOffsetY,
-            elementWidth: width,
-            elementHeight: height,
-          });
+          this.state.isVisible &&
+            this.setState({
+              xOffset: pageOffsetX,
+              yOffset: pageOffsetY,
+              elementWidth: width,
+              elementHeight: height,
+            });
         },
       );
 
     this.renderedPopover &&
       this.renderedPopover.measureInWindow(
         (pageOffsetX, pageOffsetY, width, height) => {
-          this.setState({
-            elementPopoverYOffset: pageOffsetY,
-            elementPopoverHeight: height,
-          });
+          this.state.isVisible &&
+            this.setState({
+              elementPopoverYOffset: pageOffsetY,
+              elementPopoverHeight: height,
+            });
         },
       );
   };
