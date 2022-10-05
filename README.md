@@ -15,11 +15,11 @@ Code for the Expo app is here: https://github.com/andreiCalazans/rnTooltipTester
 
 ## Install
 
-`yarn add <orionpro>/<rn-tooltip> --save`
+`yarn add orionpro/rn-tooltip --save`
 
 or
 
-`npm install <orionpro>/<rn-tooltip> --save`
+`npm install orionpro/rn-tooltip --save`
 
 
 
