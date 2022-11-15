@@ -44,7 +44,7 @@
     }
   },
   "dependencies": {
-    "react-native-svg": "12.1.1"
+    "react-native-svg": "^12.3.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^6.1.3",
