@@ -44,7 +44,8 @@
     }
   },
   "dependencies": {
-    "react-native-svg": "^12.3.0"
+    "react-native-svg": "^12.3.0",
+    "deprecated-react-native-prop-types": "2.2.0",
   },
   "devDependencies": {
     "@commitlint/cli": "^6.1.3",
