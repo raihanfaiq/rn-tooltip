@@ -44,7 +44,7 @@
     }
   },
   "dependencies": {
-    "react-native-svg": "^12.3.0",
+    "react-native-svg": "14.1.0",
     "deprecated-react-native-prop-types": "2.2.0"
   },
   "devDependencies": {
