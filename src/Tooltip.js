@@ -207,7 +207,7 @@ class Tooltip extends React.Component<Props, State> {
 
     const pastMiddleLine = yOffset > y;
     if (pastMiddleLine) {
-      tooltipStyle.bottom = ActualScreenHeight - y + tooltipOffset;
+      tooltipStyle.top = yOffset + elementHeight + tooltipOffset + 10;
     } else {
       tooltipStyle.top = y + tooltipOffset;
     }
