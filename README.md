@@ -6,6 +6,7 @@
 
 *Simple, lightwweight and **blazing fast** react native tooltip*
 
+Made a little adjusment at internal calculation. The tooltip will always show at the bottom of the component
 
 <img src="./tooltipExample.gif" width='250' />
 
